@@ -1762,6 +1762,7 @@ export default function Dashboard() {
         remedy: prodForm.remedy, price: toNumber(prodForm.price, 0),
         offer_price: prodForm.offerPrice === '' ? null : toNumber(prodForm.offerPrice, 0),
         purchase_price: prodForm.purchasePrice === '' ? null : toNumber(prodForm.purchasePrice, 0),
+        cost_price: prodForm.purchasePrice === '' ? null : toNumber(prodForm.purchasePrice, 0),
         mrp: prodForm.mrp === '' ? null : toNumber(prodForm.mrp, 0),
         sku: prodForm.sku || null,
         barcode: prodForm.barcode || null,
@@ -1796,7 +1797,7 @@ export default function Dashboard() {
       name: p.name, nameTa: p.nameTa || p.tamilName || '', category: p.category,
       categoryId: p.categoryId ?? null, remedy: p.remedy || [],
       price: p.price, offerPrice: p.offerPrice || '',
-      purchasePrice: p.purchasePrice || '', mrp: p.mrp || '',
+      purchasePrice: p.costPrice != null ? p.costPrice : (p.purchasePrice != null ? p.purchasePrice : ''), mrp: p.mrp || '',
       sku: p.sku || '', barcode: p.barcode || '',
       unitType: p.unitType,
       unitLabel: p.unitLabel, baseQuantity: p.baseQuantity,
@@ -1891,7 +1892,7 @@ export default function Dashboard() {
     setEditingVariantId(v.id)
     setVariantForm({
       name: v.variantName, sizeLabel: v.sizeLabel || '', price: String(v.price),
-      purchasePrice: String(v.purchasePrice || ''), mrp: String(v.mrp || ''),
+      purchasePrice: v.purchasePrice != null ? String(v.purchasePrice) : '', mrp: v.mrp != null ? String(v.mrp) : '',
       sku: v.sku || '', barcode: v.barcode || '',
       stock: String(v.stock), weightValue: String(v.weightValue || ''), weightUnit: v.weightUnit || '', isDefault: !!v.isDefault
     })
@@ -3017,14 +3018,6 @@ export default function Dashboard() {
                       icon: <Receipt size={16} />,
                       color: 'text-amber-500',
                       bg: 'bg-amber-50',
-                    },
-                    {
-                      label: 'Total Items Sold',
-                      helper: 'From completed bills',
-                      value: String(Math.round(analytics.totalProductsSold)),
-                      icon: <Box size={16} />,
-                      color: 'text-gray-500',
-                      bg: 'bg-gray-50',
                     },
                     {
                       label: 'Average Revenue Per Bill',

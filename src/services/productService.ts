@@ -6,11 +6,12 @@ import { supabase } from '../lib/supabase'
  */
 const PRODUCT_COLUMNS = [
   'id', 'name', 'name_ta', 'tamil_name', 'category', 'category_id',
-  'remedy', 'price', 'offer_price', 'unit_type', 'unit_label',
-  'base_quantity', 'stock_quantity', 'stock_unit', 'allow_decimal_quantity',
-  'predefined_options', 'is_active', 'sort_order', 'unit', 'rating',
+  'remedy', 'price', 'offer_price', 'purchase_price', 'cost_price', 'mrp', 'gst_percent',
+  'unit_type', 'unit_label', 'unit', 'base_quantity', 'stock_quantity', 'opening_stock', 'stock', 'stock_unit',
+  'low_stock_alert', 'allow_decimal_quantity', 'predefined_options', 'rating',
   'description', 'description_ta', 'benefits', 'benefits_ta',
   'image_url', 'image', 'has_variants', 'barcode', 'sku',
+  'brand', 'supplier', 'size', 'color', 'is_active', 'sort_order',
 ].join(', ')
 
 export function fetchAllCategories() {
@@ -30,7 +31,7 @@ export async function updateItemPrice(params: {
   entityType: 'product' | 'variant'
   id: number | string
   newPrice: number
-  newCostPrice?: number
+  newCostPrice?: number | null
 }): Promise<void> {
   if (params.newPrice < 0) throw new Error('Price cannot be negative')
 
@@ -39,8 +40,12 @@ export async function updateItemPrice(params: {
       price: params.newPrice,
       updated_at: new Date().toISOString(),
     }
-    if (params.newCostPrice !== undefined && params.newCostPrice >= 0) {
+    if (params.newCostPrice === null) {
+      updatePayload.purchase_price = null
+      updatePayload.cost_price = null
+    } else if (params.newCostPrice !== undefined && params.newCostPrice >= 0) {
       updatePayload.purchase_price = params.newCostPrice
+      updatePayload.cost_price = params.newCostPrice
     }
     const { error } = await supabase
       .from('product_variants')
@@ -52,8 +57,12 @@ export async function updateItemPrice(params: {
       price: params.newPrice,
       updated_at: new Date().toISOString(),
     }
-    if (params.newCostPrice !== undefined && params.newCostPrice >= 0) {
+    if (params.newCostPrice === null) {
+      updatePayload.purchase_price = null
+      updatePayload.cost_price = null
+    } else if (params.newCostPrice !== undefined && params.newCostPrice >= 0) {
       updatePayload.purchase_price = params.newCostPrice
+      updatePayload.cost_price = params.newCostPrice
     }
     const { error } = await supabase
       .from('products')

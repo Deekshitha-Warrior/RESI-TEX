@@ -37,7 +37,6 @@ export const AdjustStockModal: React.FC<AdjustStockModalProps> = ({
   const [removeQuantity, setRemoveQuantity] = useState<number | ''>(0)
   const [removeReason, setRemoveReason] = useState<RemoveReason>('DAMAGE')
   const [correctedQuantity, setCorrectedQuantity] = useState<number | ''>(0)
-  const [note, setNote] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
@@ -48,7 +47,6 @@ export const AdjustStockModal: React.FC<AdjustStockModalProps> = ({
       setRemoveQuantity(0)
       setRemoveReason('DAMAGE')
       setCorrectedQuantity(item.stock)
-      setNote('')
       setError('')
     }
   }, [item, isOpen])
@@ -137,7 +135,7 @@ export const AdjustStockModal: React.FC<AdjustStockModalProps> = ({
         variant_id: item.variant_id || null,
         new_quantity: effectiveNewStock,
         reason: effectiveReason,
-        note: note.trim() || undefined,
+        note: undefined,
         created_by_name: 'Admin',
       })
 
@@ -543,28 +541,6 @@ export const AdjustStockModal: React.FC<AdjustStockModalProps> = ({
               >
                 {delta > 0 ? `+${delta}` : delta}
               </span>
-            </div>
-
-            {/* Note Input */}
-            <div>
-              <label htmlFor="adjust-note" className="block text-[11px] font-bold text-gray-600 mb-1">
-                Adjustment Note / Reason Description (Optional)
-              </label>
-              <input
-                id="adjust-note"
-                name="adjustNote"
-                type="text"
-                placeholder={
-                  mode === 'RESTOCK'
-                    ? 'e.g. Received new stock shipment / batch delivery'
-                    : mode === 'REMOVE'
-                    ? 'e.g. Broken packaging, water damage, supplier return'
-                    : 'e.g. Physical inventory count reconciliation'
-                }
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                className="w-full py-2 px-3 rounded-xl border border-gray-300 bg-white text-xs text-gray-900 outline-none focus:border-[#7B1E2B]"
-              />
             </div>
           </div>
 

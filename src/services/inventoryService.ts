@@ -95,7 +95,7 @@ export const inventoryService = {
     // 1. Fetch products
     const { data: products, error: prodErr } = await supabase
       .from('products')
-      .select('id, name, name_ta, price, offer_price, purchase_price, stock_quantity, low_stock_alert, unit, unit_type, category, category_id, image_url, barcode, sku, is_active, updated_at')
+      .select('id, name, name_ta, price, offer_price, purchase_price, cost_price, stock_quantity, low_stock_alert, unit, unit_type, category, category_id, image_url, barcode, sku, is_active, updated_at')
       .order('name', { ascending: true })
 
     if (prodErr) {
@@ -106,7 +106,7 @@ export const inventoryService = {
     // 2. Fetch variants
     const { data: variants, error: varErr } = await supabase
       .from('product_variants')
-      .select('id, product_id, variant_name, price, purchase_price, stock, barcode, sku, is_active, updated_at')
+      .select('id, product_id, variant_name, price, purchase_price, cost_price, stock, barcode, sku, is_active, updated_at')
       .order('sort_order', { ascending: true })
 
     if (varErr) {
@@ -185,8 +185,8 @@ export const inventoryService = {
             low_stock_threshold: threshold,
             price: Number(v.price) || Number(p.price) || 0,
             offer_price: p.offer_price ? Number(p.offer_price) : undefined,
-            purchase_price: v.purchase_price ? Number(v.purchase_price) : (p.purchase_price ? Number(p.purchase_price) : undefined),
-            cost_price: v.purchase_price ? Number(v.purchase_price) : (p.purchase_price ? Number(p.purchase_price) : undefined),
+            purchase_price: v.cost_price != null ? Number(v.cost_price) : (v.purchase_price != null ? Number(v.purchase_price) : (p.cost_price != null ? Number(p.cost_price) : (p.purchase_price != null ? Number(p.purchase_price) : undefined))),
+            cost_price: v.cost_price != null ? Number(v.cost_price) : (v.purchase_price != null ? Number(v.purchase_price) : (p.cost_price != null ? Number(p.cost_price) : (p.purchase_price != null ? Number(p.purchase_price) : undefined))),
             unit: p.unit,
             unit_type: p.unit_type,
             category: resolvedCategory,
@@ -211,8 +211,8 @@ export const inventoryService = {
           low_stock_threshold: threshold,
           price: Number(p.price) || 0,
           offer_price: p.offer_price ? Number(p.offer_price) : undefined,
-          purchase_price: p.purchase_price ? Number(p.purchase_price) : undefined,
-          cost_price: p.purchase_price ? Number(p.purchase_price) : undefined,
+          purchase_price: p.cost_price != null ? Number(p.cost_price) : (p.purchase_price != null ? Number(p.purchase_price) : undefined),
+          cost_price: p.cost_price != null ? Number(p.cost_price) : (p.purchase_price != null ? Number(p.purchase_price) : undefined),
           unit: p.unit,
           unit_type: p.unit_type,
           category: resolvedCategory,

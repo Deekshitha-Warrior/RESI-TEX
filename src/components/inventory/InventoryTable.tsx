@@ -155,7 +155,7 @@ export const InventoryTable: React.FC = () => {
               id: Number(p.id),
               name: p.name,
               price: p.price,
-              cost_price: p.purchasePrice || 0,
+              cost_price: p.costPrice != null ? Number(p.costPrice) : (p.purchasePrice != null ? Number(p.purchasePrice) : undefined),
               barcode: p.barcode,
               stock_quantity: p.stockQuantity ?? p.stock ?? 0,
               category: p.category,
@@ -172,7 +172,7 @@ export const InventoryTable: React.FC = () => {
               id: i.product_id,
               name: i.name,
               price: i.price,
-              cost_price: 0,
+              cost_price: i.cost_price != null ? Number(i.cost_price) : (i.purchase_price != null ? Number(i.purchase_price) : undefined),
               barcode: i.barcode || undefined,
               stock_quantity: i.stock,
               category: i.category || undefined,
@@ -636,6 +636,7 @@ export const InventoryTable: React.FC = () => {
                       ...it,
                       price: updated.price,
                       purchase_price: updated.cost_price ?? it.purchase_price,
+                      cost_price: updated.cost_price ?? it.cost_price,
                     }
                   : it
               )

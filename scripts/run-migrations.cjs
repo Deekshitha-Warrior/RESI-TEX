@@ -367,7 +367,9 @@ async function verifyDatabase(supabase) {
   }
 }
 
-main().catch((err) => {
-  console.error('Fatal error running migrations:', err);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((err) => {
+    console.error('Fatal error running migrations:', err);
+    process.exit(1);
+  });
+}

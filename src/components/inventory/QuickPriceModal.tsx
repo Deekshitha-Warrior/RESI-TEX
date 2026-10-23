@@ -9,14 +9,16 @@ interface Props {
   isOpen: boolean
   item: InventoryStockItem | null
   onClose: () => void
-  onSuccess: (updated: { id: string; price: number; cost_price?: number }) => void
+  onSuccess: (updated: { id: string; price: number; cost_price?: number | null }) => void
 }
 
 export const QuickPriceModal: React.FC<Props> = ({ isOpen, item, onClose, onSuccess }) => {
   const { themeColor, textColor } = useTheme()
   const [sellingPrice, setSellingPrice] = useState<string>(item ? String(item.price ?? '') : '')
   const [costPrice, setCostPrice] = useState<string>(
-    item && item.purchase_price !== undefined ? String(item.purchase_price) : ''
+    item && (item.cost_price != null || item.purchase_price != null)
+      ? String(item.cost_price ?? item.purchase_price)
+      : ''
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -25,7 +27,11 @@ export const QuickPriceModal: React.FC<Props> = ({ isOpen, item, onClose, onSucc
   useEffect(() => {
     if (item) {
       setSellingPrice(String(item.price ?? ''))
-      setCostPrice(item.purchase_price !== undefined ? String(item.purchase_price) : '')
+      setCostPrice(
+        item.cost_price != null || item.purchase_price != null
+          ? String(item.cost_price ?? item.purchase_price)
+          : ''
+      )
       setError('')
     }
   }, [item])
@@ -58,8 +64,9 @@ export const QuickPriceModal: React.FC<Props> = ({ isOpen, item, onClose, onSucc
       return
     }
 
-    const numCost = costPrice.trim() !== '' ? Number(costPrice) : undefined
-    if (numCost !== undefined && (isNaN(numCost) || numCost < 0)) {
+    const trimmedCost = costPrice.trim()
+    const numCost = trimmedCost !== '' ? Number(trimmedCost) : null
+    if (numCost !== null && (isNaN(numCost) || numCost < 0)) {
       setError('Please enter a valid cost price.')
       return
     }
